@@ -1,10 +1,17 @@
 'use client'
 
 import React from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, Props as CanvasProps } from '@react-three/fiber'
 import { Text, OrbitControls } from '@react-three/drei'
 import { useTheme } from 'next-themes'
-import * as THREE from 'three'
+import type { OrbitControlsProps } from '@react-three/drei/core/OrbitControls'
+
+interface TextComponentProps {
+  position: [number, number, number]
+  fontSize: number
+  color: string
+  children: React.ReactNode
+}
 
 interface Sensor3DViewProps {
   x: number
@@ -12,12 +19,12 @@ interface Sensor3DViewProps {
   z: number
 }
 
-function GridIntersections({ x, y, z, color }: { x: number; y: number; z: number; color: string }) {
+function GridIntersections({ x, y, z }: { x: number; y: number; z: number }) {
   return (
     <>
       {/* Intersection point */}
       <mesh position={[x, y, z]}>
-        <sphereGeometry args={[0.15]} />
+        <sphereGeometry args={[0.25]} />
         <meshBasicMaterial color="#ff0000" />
       </mesh>
       
@@ -60,7 +67,7 @@ function GridIntersections({ x, y, z, color }: { x: number; y: number; z: number
 }
 
 function AxisPoints({ count, axis, color }: { count: number, axis: 'x' | 'y' | 'z', color: string }) {
-  const TextComponent = Text as any;
+  const TextComponent = Text as React.ComponentType<TextComponentProps>
   return Array.from({ length: count + 1 }, (_, i) => {
     const position = {
       x: axis === 'x' ? i : 0,
@@ -89,9 +96,9 @@ function AxisPoints({ count, axis, color }: { count: number, axis: 'x' | 'y' | '
 export function Sensor3DView({ x, y, z }: Sensor3DViewProps): React.JSX.Element {
   const { theme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
-  const CanvasComponent = Canvas as any
-  const TextComponent = Text as any
-  const OrbitControlsComponent = OrbitControls as any
+  const TextComponent = Text as React.ComponentType<TextComponentProps>
+  const CanvasComponent = Canvas as React.ComponentType<CanvasProps>
+  const OrbitControlsComponent = OrbitControls as React.ComponentType<OrbitControlsProps>
 
   // Avoid hydration mismatch
   React.useEffect(() => setMounted(true), [])
@@ -195,7 +202,7 @@ export function Sensor3DView({ x, y, z }: Sensor3DViewProps): React.JSX.Element 
         ))}
 
         {/* Grid intersections */}
-        <GridIntersections x={scaledX} y={scaledY} z={scaledZ} color={gridColor} />
+        <GridIntersections x={scaledX} y={scaledY} z={scaledZ} />
 
         {/* Axis points with numbers */}
         <AxisPoints count={10} axis="x" color={gridColor} />
@@ -203,9 +210,9 @@ export function Sensor3DView({ x, y, z }: Sensor3DViewProps): React.JSX.Element 
         <AxisPoints count={10} axis="z" color={gridColor} />
 
         {/* Axis labels */}
-        <TextComponent position={[11, 0, 0]} fontSize={1} color={gridColor} children="X" />
-        <TextComponent position={[0, 11, 0]} fontSize={1} color={gridColor} children="Y" />
-        <TextComponent position={[0, 0, 11]} fontSize={1} color={gridColor} children="Z" />
+        <TextComponent position={[11, 0, 0]} fontSize={1} color={gridColor}>X</TextComponent>
+        <TextComponent position={[0, 11, 0]} fontSize={1} color={gridColor}>Y</TextComponent>
+        <TextComponent position={[0, 0, 11]} fontSize={1} color={gridColor}>Z</TextComponent>
 
         {/* Controls */}
         <OrbitControlsComponent 

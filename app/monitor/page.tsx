@@ -5,14 +5,15 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { WiFiConnectionPrompt } from "@/components/wifi-connection-prompt"
 import { Button } from "@/components/ui/button"
 import { ProtectedRoute } from '@/components/protected-route'
-import { db } from '@/lib/firebase'
-import { collection, addDoc, query, onSnapshot } from 'firebase/firestore'
+// import { db } from '@/lib/firebase'
+import { collection, addDoc, query, onSnapshot, serverTimestamp } from 'firebase/firestore'
 import { useFirebase } from '@/contexts/firebase-context'
 import { ref, onValue } from 'firebase/database'
-import { database } from '@/lib/firebase'
+// import { database } from '@/lib/firebase'
 import { fetchData } from '@/lib/fetchData'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts'
 import { Sensor3DView } from '@/components/sensor-3d-view'
+import { db } from '@/lib/firebase'
 
 interface SensorData {
   loadCell: number
@@ -48,8 +49,8 @@ export default function MonitorPage() {
   })
 
   useEffect(() => {
-    if (isConnected) {
-      const unsubscribe = fetchData('sensor', (data: any) => {
+    if (isConnected && isMonitoring) {
+      const unsubscribe = fetchData('sensor', async (data: any) => {
         if (data) {
           console.log('Received data:', data);
           setSensorData({
@@ -64,6 +65,27 @@ export default function MonitorPage() {
             humidity: data.humi,
             vibrationCount: data.vibrationCount || 0
           });
+
+          // Store data in Firestore
+          try {
+            const sensorDoc = {
+              humi: data.humi || 0,
+              jarakX: data.jarakX || 0,
+              jarakY: data.jarakY || 0,
+              jarakZ: data.jarakZ || 0,
+              load: data.weight || 0,
+              temp: data.temp || 0,
+              vibrationCount: data.vibrationCount || 0,
+              vibrationFreq: data.vibrationFrequency || 0,
+              timestamp: serverTimestamp() // Use server timestamp for consistency
+            };
+
+            console.log('Storing sensor data in Firestore:', sensorDoc);
+            const docRef = await addDoc(collection(db, 'sensors'), sensorDoc);
+            console.log('Successfully stored data with ID:', docRef.id);
+          } catch (error) {
+            console.error('Error storing data in Firestore:', error);
+          }
 
           // Update humidity history
           const now = new Date();
@@ -90,7 +112,7 @@ export default function MonitorPage() {
 
       return () => unsubscribe();
     }
-  }, [isConnected]);
+  }, [isConnected, isMonitoring]);
 
   const handleConnect = () => {
     setIsConnected(true)

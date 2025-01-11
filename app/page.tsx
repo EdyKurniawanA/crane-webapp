@@ -19,7 +19,7 @@ export default function Home() {
           <a href="/datasheets/pj-460.pdf" target="_blank" className="cursor-pointer">
             <div className="aspect-video bg-muted rounded-lg overflow-hidden group">
               <Image
-                src="/loadcell.jpg"
+                src="/loadcell.png"
                 alt="Load Cell"
                 width={300}
                 height={200}
@@ -35,7 +35,7 @@ export default function Home() {
           <a href="/datasheets/DHT22.pdf" target="_blank" className="cursor-pointer">
             <div className="aspect-video bg-muted rounded-lg overflow-hidden group">
               <Image
-                src="/dht11.jpg"
+                src="/dht11.png"
                 alt="Temperature Sensor"
                 width={300}
                 height={200}
