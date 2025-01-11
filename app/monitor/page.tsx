@@ -11,6 +11,7 @@ import { useFirebase } from '@/contexts/firebase-context'
 import { ref, onValue } from 'firebase/database'
 import { database } from '@/lib/firebase'
 import { fetchData } from '@/lib/fetchData'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface SensorData {
   loadCell: number
@@ -21,9 +22,15 @@ interface SensorData {
   vibrationCount: number
 }
 
+interface HumidityDataPoint {
+  time: string;
+  value: number;
+}
+
 export default function MonitorPage() {
   const [isConnected, setIsConnected] = useState(false)
   const [isMonitoring, setIsMonitoring] = useState(false)
+  const [humidityHistory, setHumidityHistory] = useState<HumidityDataPoint[]>([])
   const [sensorData, setSensorData] = useState<SensorData>({
     loadCell: 0,
     humidity: 0.0,
@@ -50,6 +57,16 @@ export default function MonitorPage() {
             humidity: data.humi,
             vibrationCount: data.vibrationCount || 0
           });
+
+          // Update humidity history
+          const now = new Date();
+          const timeStr = now.toLocaleTimeString();
+          setHumidityHistory(prev => {
+            const newHistory = [...prev, { time: timeStr, value: data.humi }];
+            // Keep only last 10 data points for better visualization
+            return newHistory.slice(-10);
+          });
+
           console.log('Received temperature data:', data.temp);
           console.log('Mapped temperature data:', {
             celsius: data.temp.celsius,
@@ -108,13 +125,39 @@ export default function MonitorPage() {
               </p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle>Humidity</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
-                {sensorData.humidity !== undefined ? sensorData.humidity.toFixed(2) : 'N/A'}%
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={humidityHistory}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="time"
+                      tick={{ fontSize: 12 }}
+                      interval="preserveStartEnd"
+                    />
+                    <YAxis
+                      domain={[0, 100]}
+                      tick={{ fontSize: 12 }}
+                      label={{ value: 'Humidity (%)', angle: -90, position: 'insideLeft' }}
+                    />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#2563eb"
+                      strokeWidth={2}
+                      dot={false}
+                      isAnimationActive={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <p className="text-2xl font-bold mt-4 text-center">
+                Current: {sensorData.humidity !== undefined ? sensorData.humidity.toFixed(2) : 'N/A'}%
               </p>
             </CardContent>
           </Card>
