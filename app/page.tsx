@@ -1,101 +1,118 @@
-import Image from "next/image";
+import Link from 'next/link'
+import Image from 'next/image'
+import { Button } from "@/components/ui/button"
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center text-center space-y-8 pt-16">
+      <h1 className="text-6xl font-bold tracking-tighter sm:text-7xl">
+        Monitor Your IoT Devices
+      </h1>
+      <p className="text-xl text-muted-foreground max-w-2xl">
+        Real-time monitoring of your sensors and devices with a clean, modern interface.
+      </p>
+      <Button asChild size="lg" className="rounded-full px-8">
+        <Link href="/monitor">Get Started</Link>
+      </Button>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mt-16">
+        <div className="space-y-4">
+          <a href="/datasheets/pj-460.pdf" target="_blank" className="cursor-pointer">
+            <div className="aspect-video bg-muted rounded-lg overflow-hidden group">
+              <Image
+                src="/loadcell.jpg"
+                alt="Load Cell"
+                width={300}
+                height={200}
+                className="object-cover w-full h-full transition-all duration-300 group-hover:scale-110"
+              />
+            </div>
+            <h3 className="text-xl font-semibold hover:text-primary transition-colors mt-2">Load Cell</h3>
           </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          <p className="text-muted-foreground">Precise weight and force measurements</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="space-y-4">
+          <a href="/datasheets/DHT22.pdf" target="_blank" className="cursor-pointer">
+            <div className="aspect-video bg-muted rounded-lg overflow-hidden group">
+              <Image
+                src="/dht11.jpg"
+                alt="Temperature Sensor"
+                width={300}
+                height={200}
+                className="object-cover w-full h-full transition-all duration-300 group-hover:scale-110"
+                priority
+              />
+            </div>
+            <h3 className="text-xl font-semibold hover:text-primary transition-colors mt-2">Temperature</h3>
+          </a>
+          <p className="text-muted-foreground">Real-time temperature monitoring</p>
+        </div>
+
+        <div className="space-y-4">
+          <a href="/datasheets/HC-SR04.PDF" target="_blank" className="cursor-pointer">
+            <div className="aspect-video bg-muted rounded-lg overflow-hidden group">
+              <Image
+                src="/hcsr04.png"
+                alt="HC-SR04 Sensor"
+                width={300}
+                height={200}
+                className="object-cover w-full h-full transition-all duration-300 group-hover:scale-110"
+              />
+            </div>
+            <h3 className="text-xl font-semibold hover:text-primary transition-colors mt-2">HC-SR04</h3>
+          </a>
+          <p className="text-muted-foreground">3D position tracking</p>
+        </div>
+
+        <div className="space-y-4">
+          <a href="/datasheets/Vibration-Sensor-Datasheet.pdf" target="_blank" className="cursor-pointer">
+            <div className="aspect-video bg-muted rounded-lg overflow-hidden group">
+              <Image
+                src="/vibration.png"
+                alt="Vibration Sensor"
+                width={300}
+                height={200}
+                className="object-cover w-full h-full transition-all duration-300 group-hover:scale-110"
+              />
+            </div>
+            <h3 className="text-xl font-semibold hover:text-primary transition-colors mt-2">Vibration</h3>
+          </a>
+          <p className="text-muted-foreground">Frequency analysis</p>
+        </div>
+
+        <div className="space-y-4">
+          <a href="/datasheets/SER0002.pdf" target="_blank" className="cursor-pointer">
+            <div className="aspect-video bg-muted rounded-lg overflow-hidden group">
+              <Image
+                src="/servo.png"
+                alt="Hitec HS422 Servo"
+                width={300}
+                height={200}
+                className="object-cover w-full h-full transition-all duration-300 group-hover:scale-110"
+              />
+            </div>
+            <h3 className="text-xl font-semibold hover:text-primary transition-colors mt-2">Servo Motor</h3>
+          </a>
+          <p className="text-muted-foreground">Precise position control</p>
+        </div>
+
+        <div className="space-y-4">
+          <a href="https://www.instagram.com/betro22_?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" className="cursor-pointer">
+            <div className="aspect-video bg-muted rounded-lg overflow-hidden group">
+              <Image
+                src="/betro_ig.jpg"
+                alt="Betro Instagram"
+                width={300}
+                height={200}
+                className="object-cover w-full h-full transition-all duration-300 group-hover:scale-110"
+              />
+            </div>
+            <h3 className="text-xl font-semibold hover:text-primary transition-colors mt-2">Follow Us</h3>
+          </a>
+          <p className="text-muted-foreground">Our official social media account</p>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
+
