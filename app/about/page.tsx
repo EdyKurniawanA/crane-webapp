@@ -29,7 +29,7 @@ export default function AboutPage() {
           <p>
             The development of the industry, the production carried out by an industry is required to be faster with a larger capacity. 
             Therefore, in the industrial world, tools are now needed to move and lift goods ranging from simple ones to those that use automatic technology. 
-            One of the aircraft means of lifting and moving goods is a crane. In this case, the use of cranes is combined with the sophistication of today's technology, 
+            One of the aircraft means of lifting and moving goods is a crane. In this case, the use of cranes is combined with the sophistication of today&apos;s technology, 
             namely IoT-based. With this web application, it is easy for users to monitor each component on the crane. 
             This allows workers to monitor cranes without having to have physical contact. 
             This web application provides actual information based on the components on the crane. Overhead Crane web application makes it easy to monitor a crane
