@@ -60,6 +60,7 @@ function GridIntersections({ x, y, z, color }: { x: number; y: number; z: number
 }
 
 function AxisPoints({ count, axis, color }: { count: number, axis: 'x' | 'y' | 'z', color: string }) {
+  const TextComponent = Text as any;
   return Array.from({ length: count + 1 }, (_, i) => {
     const position = {
       x: axis === 'x' ? i : 0,
@@ -69,7 +70,7 @@ function AxisPoints({ count, axis, color }: { count: number, axis: 'x' | 'y' | '
     
     return (
       <group key={i}>
-        <Text
+        <TextComponent
           position={[
             position.x + (axis === 'x' ? 0 : 0.3),
             position.y + (axis === 'y' ? 0 : 0.3),
@@ -79,7 +80,7 @@ function AxisPoints({ count, axis, color }: { count: number, axis: 'x' | 'y' | '
           color={color}
         >
           {(i * 10).toString()}
-        </Text>
+        </TextComponent>
       </group>
     )
   })
@@ -88,6 +89,9 @@ function AxisPoints({ count, axis, color }: { count: number, axis: 'x' | 'y' | '
 export function Sensor3DView({ x, y, z }: Sensor3DViewProps): React.JSX.Element {
   const { theme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
+  const CanvasComponent = Canvas as any
+  const TextComponent = Text as any
+  const OrbitControlsComponent = OrbitControls as any
 
   // Avoid hydration mismatch
   React.useEffect(() => setMounted(true), [])
@@ -103,7 +107,7 @@ export function Sensor3DView({ x, y, z }: Sensor3DViewProps): React.JSX.Element 
 
   return (
     <div className="w-full h-[300px]" style={{ background: backgroundColor }}>
-      <Canvas 
+      <CanvasComponent 
         camera={{ 
           position: [15, 15, 15],
           fov: 50,
@@ -199,18 +203,18 @@ export function Sensor3DView({ x, y, z }: Sensor3DViewProps): React.JSX.Element 
         <AxisPoints count={10} axis="z" color={gridColor} />
 
         {/* Axis labels */}
-        <Text position={[11, 0, 0]} fontSize={1} color={gridColor}>X</Text>
-        <Text position={[0, 11, 0]} fontSize={1} color={gridColor}>Y</Text>
-        <Text position={[0, 0, 11]} fontSize={1} color={gridColor}>Z</Text>
+        <TextComponent position={[11, 0, 0]} fontSize={1} color={gridColor} children="X" />
+        <TextComponent position={[0, 11, 0]} fontSize={1} color={gridColor} children="Y" />
+        <TextComponent position={[0, 0, 11]} fontSize={1} color={gridColor} children="Z" />
 
         {/* Controls */}
-        <OrbitControls 
+        <OrbitControlsComponent 
           enableZoom={true} 
           enablePan={true}
           minDistance={10}
           maxDistance={50}
         />
-      </Canvas>
+      </CanvasComponent>
     </div>
   )
 } 
