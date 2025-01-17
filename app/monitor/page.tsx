@@ -54,58 +54,33 @@ export default function MonitorPage() {
         if (data) {
           console.log('Received data:', data);
           setSensorData({
-            loadCell: data.weight,
-            temperature: { celsius: data.temp, fahrenheit: (data.temp * 9/5) + 32 },
-            hcsr04: {
-              x: data.jarakX,
-              y: data.jarakY,
-              z: data.jarakZ
+            loadCell: data.weight || 0,
+            humidity: data.humi || 0,
+            temperature: { 
+              celsius: data.temp || 0, 
+              fahrenheit: ((data.temp || 0) * 9/5) + 32 
             },
-            vibration: data.vibrationFrequency,
-            humidity: data.humi,
+            hcsr04: {
+              x: data.jarakX || 0,
+              y: data.jarakY || 0,
+              z: data.jarakZ || 0
+            },
+            vibration: data.vibrationFrequency || 0,
             vibrationCount: data.vibrationCount || 0
           });
-
-          // Store data in Firestore
-          try {
-            const sensorDoc = {
-              humi: data.humi || 0,
-              jarakX: data.jarakX || 0,
-              jarakY: data.jarakY || 0,
-              jarakZ: data.jarakZ || 0,
-              load: data.weight || 0,
-              temp: data.temp || 0,
-              vibrationCount: data.vibrationCount || 0,
-              vibrationFreq: data.vibrationFrequency || 0,
-              timestamp: serverTimestamp() // Use server timestamp for consistency
-            };
-
-            console.log('Storing sensor data in Firestore:', sensorDoc);
-            const docRef = await addDoc(collection(db, 'sensors'), sensorDoc);
-            console.log('Successfully stored data with ID:', docRef.id);
-          } catch (error) {
-            console.error('Error storing data in Firestore:', error);
-          }
 
           // Update humidity history
           const now = new Date();
           const timeStr = now.toLocaleTimeString();
           setHumidityHistory(prev => {
-            const newHistory = [...prev, { time: timeStr, value: data.humi }];
-            // Keep only last 10 data points for better visualization
+            const newHistory = [...prev, { time: timeStr, value: data.humi || 0 }];
             return newHistory.slice(-10);
           });
 
           // Update vibration history
           setVibrationHistory(prev => {
-            const newHistory = [...prev, { time: timeStr, value: data.vibrationFrequency }];
+            const newHistory = [...prev, { time: timeStr, value: data.vibrationFrequency || 0 }];
             return newHistory.slice(-10);
-          });
-
-          console.log('Received temperature data:', data.temp);
-          console.log('Mapped temperature data:', {
-            celsius: data.temp.celsius,
-            fahrenheit: data.temp.fahrenheit
           });
         }
       });
@@ -324,32 +299,76 @@ export default function MonitorPage() {
             <CardContent>
               <div className="h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={vibrationHistory}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="time"
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="65%"
+                    outerRadius="100%"
+                    barSize={15}
+                    data={[
+                      {
+                        value: Math.min(sensorData.vibration, 50),
+                        fill: sensorData.vibration <= 10 ? '#22c55e' : 
+                              sensorData.vibration <= 30 ? '#eab308' : '#dc2626'
+                      }
+                    ]}
+                    startAngle={180}
+                    endAngle={0}
+                  >
+                    <PolarAngleAxis
+                      type="number"
+                      domain={[0, 50]}
+                      angleAxisId={0}
                       tick={{ fontSize: 12 }}
-                      interval="preserveStartEnd"
+                      ticks={[0, 10, 30, 50]}
                     />
-                    <YAxis
-                      tick={{ fontSize: 12 }}
-                      label={{ value: 'Frequency (Hz)', angle: -90, position: 'insideLeft' }}
-                    />
-                    <Tooltip />
-                    <Line
-                      type="monotone"
+                    <RadialBar
+                      background
                       dataKey="value"
-                      stroke="#dc2626"
-                      strokeWidth={2}
-                      dot={false}
-                      isAnimationActive={false}
+                      cornerRadius={15/2}
                     />
-                  </LineChart>
+                    <text
+                      x="50%"
+                      y="50%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className="fill-current text-2xl font-bold"
+                    >
+                      {sensorData.vibration !== undefined ? `${sensorData.vibration.toFixed(1)} Hz` : 'N/A'}
+                    </text>
+                    <text
+                      x="50%"
+                      y="65%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className={`fill-current text-sm ${
+                        sensorData.vibration <= 10 ? 'text-green-500' :
+                        sensorData.vibration <= 30 ? 'text-yellow-500' : 'text-red-500'
+                      }`}
+                    >
+                      {sensorData.vibration <= 10 ? 'Normal' :
+                       sensorData.vibration <= 30 ? 'Pre-caution' : 'Danger'}
+                    </text>
+                  </RadialBarChart>
                 </ResponsiveContainer>
               </div>
-              <p className="text-2xl font-bold mt-4 text-center">
-                Current: {sensorData.vibration !== undefined ? sensorData.vibration.toFixed(2) : 'N/A'} Hz
-              </p>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
+                <div className="flex flex-col items-center">
+                  <div className="w-3 h-3 rounded-full bg-green-500 mb-1"></div>
+                  <span>1-10 Hz</span>
+                  <span className="text-green-500">Normal</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="w-3 h-3 rounded-full bg-yellow-500 mb-1"></div>
+                  <span>11-30 Hz</span>
+                  <span className="text-yellow-500">Pre-caution</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="w-3 h-3 rounded-full bg-red-500 mb-1"></div>
+                  <span>31-50 Hz</span>
+                  <span className="text-red-500">Danger</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
           <Card>

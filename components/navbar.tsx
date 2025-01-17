@@ -44,6 +44,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>
             <Link href="/monitor" className="hover:text-primary transition-colors">Monitor</Link>
+            <Link href="/control" className="hover:text-primary transition-colors">Control System</Link>
             <Link href="/profile" className="hover:text-primary transition-colors">Profile</Link>
             <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
             <Link href="/about" className="hover:text-primary transition-colors">About</Link>
@@ -93,6 +94,13 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Monitor
+              </Link>
+              <Link 
+                href="/control" 
+                className="hover:text-primary transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Control System
               </Link>
               <Link 
                 href="/profile" 
